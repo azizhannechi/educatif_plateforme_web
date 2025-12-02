@@ -14,8 +14,18 @@ class User {
     this.role = role;
     this.createdAt = createdAt;
     this.lastLogin = lastLogin;
-    this.profilePicture = profilePicture
-    
+    this.profilePicture = profilePicture;
+  }
+
+  toFirestore() {
+    return {
+      email: this.email,
+      name: this.name,
+      role: this.role,
+      createdAt: this.createdAt,
+      lastLogin: this.lastLogin,
+      profilePicture: this.profilePicture
+    };
   }
 }
 

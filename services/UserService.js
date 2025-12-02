@@ -1,13 +1,34 @@
-import { db } from "../firebase/firebaseConfig.js";
+import { db } from "../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import User from "../models/User.js";
+import User from "../models/User";
 
-export const createUser = async (userId, userData) => {
-  await setDoc(doc(db, "users", userId), userData);
-  return new User({ id: userId, ...userData });
-};
+export async function createUser(user) {
+  try {
+    const userRef = doc(db, "users", user.id);
+    await setDoc(userRef, user.toFirestore());
+    console.log("User saved:", user.id);
+    return true;
+  } catch (error) {
+    console.error("Error saving user:", error);
+    return false;
+  }
+}
 
-export const getUser = async (userId) => {
-  const snap = await getDoc(doc(db, "users", userId));
-  return snap.exists() ? new User({ id: userId, ...snap.data() }) : null;
-};
+export async function getUser(userId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    const snapshot = await getDoc(userRef);
+
+    if (!snapshot.exists()) return null;
+
+    return new User({
+      id: userId,
+      ...snapshot.data(),
+    });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+}
+
+
